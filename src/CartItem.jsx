@@ -4,35 +4,28 @@ import { removeItem, updateQuantity } from './CartSlice';
 import './CartItem.css';
 
 const CartItem = ({ onContinueShopping }) => {
-
-  // Get cart items from the Redux store
+  // Get cart items from Redux
   const cart = useSelector(state => state.cart.items);
-
-  // Initialize dispatch
   const dispatch = useDispatch();
 
-
-  // Calculate total amount for all products in the cart
+  // Calculate the total amount of all items
   const calculateTotalAmount = () => {
     return cart.reduce((total, item) => {
       return total + parseFloat(item.cost.substring(1)) * item.quantity;
     }, 0);
   };
 
-
-  // Handle Continue Shopping button
+  // Continue shopping
   const handleContinueShopping = (e) => {
     onContinueShopping(e);
   };
 
-
-  // Handle Checkout button
-  const handleCheckoutShopping = (e) => {
+  // Checkout
+  const handleCheckoutShopping = () => {
     alert('Functionality to be added for future reference');
   };
 
-
-  // Handle incrementing the quantity
+  // Increase quantity
   const handleIncrement = (item) => {
     dispatch(updateQuantity({
       name: item.name,
@@ -40,48 +33,39 @@ const CartItem = ({ onContinueShopping }) => {
     }));
   };
 
-
-  // Handle decrementing the quantity
+  // Decrease quantity
   const handleDecrement = (item) => {
-
     if (item.quantity > 1) {
-
       dispatch(updateQuantity({
         name: item.name,
         quantity: item.quantity - 1
       }));
-
     } else {
-
       dispatch(removeItem(item.name));
-
     }
   };
 
-
-  // Handle removing an item from the cart
+  // Remove an item completely
   const handleRemove = (item) => {
     dispatch(removeItem(item.name));
   };
 
-
-  // Calculate subtotal for an individual product
+  // Calculate subtotal for each product
   const calculateTotalCost = (item) => {
     return parseFloat(item.cost.substring(1)) * item.quantity;
   };
-
 
   return (
     <div className="cart-container">
 
       <h2 style={{ color: 'black' }}>
-        Total Cart Amount: ${calculateTotalAmount()}
+        Total Cart Amount: ${calculateTotalAmount().toFixed(2)}
       </h2>
 
-      <div>
-
-        {cart.map(item => (
-
+      {cart.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        cart.map(item => (
           <div className="cart-item" key={item.name}>
 
             <img
@@ -123,7 +107,7 @@ const CartItem = ({ onContinueShopping }) => {
               </div>
 
               <div className="cart-item-total">
-                Total: ${calculateTotalCost(item)}
+                Total: ${calculateTotalCost(item).toFixed(2)}
               </div>
 
               <button
@@ -134,12 +118,9 @@ const CartItem = ({ onContinueShopping }) => {
               </button>
 
             </div>
-
           </div>
-
-        ))}
-
-      </div>
+        ))
+      )}
 
       <div
         style={{ marginTop: '20px', color: 'black' }}
